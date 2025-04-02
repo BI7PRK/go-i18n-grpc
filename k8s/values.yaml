@@ -1,14 +1,18 @@
 #服务部署
 deploy:
-    version: 0.0.0-0
+    go-i18n-grpc: 0.0.0-0
+
+    # 部署命名空间
     namespace: local-dev
+    # 镜像仓库
     image:
         base: docker-image.bi7prk.com/golang
         secrets: images-secret-dev
+        
     ingress:
         #内部通讯域名
         inner_host: bi7prk.com
-    
+    # apollo配置
     apollo:
         appid: "TestApp1"
         namespace: "application"
