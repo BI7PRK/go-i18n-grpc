@@ -3,7 +3,7 @@ deploy:
     go-i18n-grpc: 0.0.0-0
     namespace: local-dev
     image:
-        base: docker-image.bi7prk.com/dotnet
+        base: docker-image.bi7prk.com/golang
         secrets: images-secret-dev
     ingress:
         #内部通讯域名
