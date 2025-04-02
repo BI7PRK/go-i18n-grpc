@@ -23,16 +23,16 @@ spec:
 
 ---
 # 配置定义
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{$deployname}}
-data:
-  APOLLO_APPID: {{.Values.deploy.apollo.appid}}
-  APOLLO_ENV: {{.Values.deploy.apollo.env}}
-  APOLLO_HOST: {{.Values.deploy.apollo.host}}
-  APOLLO_SECRET: {{.Values.deploy.apollo.secret}}
----
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: {{$deployname}}
+# data:
+#   APOLLO_APPID: {{.Values.deploy.apollo.appid}}
+#   APOLLO_ENV: {{.Values.deploy.apollo.env}}
+#   APOLLO_HOST: {{.Values.deploy.apollo.host}}
+#   APOLLO_SECRET: {{.Values.deploy.apollo.secret}}
+# ---
 
 #部署定义
 apiVersion: apps/v1
