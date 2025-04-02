@@ -22,17 +22,6 @@ spec:
       targetPort: 50001
 
 ---
-# 配置定义
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{$deployname}}
-data:
-  APOLLO_APPID: {{.Values.deploy.apollo.appid}}
-  APOLLO_ENV: {{.Values.deploy.apollo.env}}
-  APOLLO_HOST: {{.Values.deploy.apollo.host}}
-  APOLLO_SECRET: {{.Values.deploy.apollo.secret}}
----
 
 #部署定义
 apiVersion: apps/v1
@@ -61,6 +50,14 @@ spec:
               value: http://*:50001
             - name: local-dev
               value: eks
+            - name: APOLLO_APPID
+              value: {{.Values.deploy.apollo.appid}}
+            - name: APOLLO_ENV
+              value: {{.Values.deploy.apollo.env}}
+            - name: APOLLO_HOST
+              value: {{.Values.deploy.apollo.host}}
+            - name: APOLLO_SECRET
+              value: {{.Values.deploy.apollo.secret}}
           ports:
             - name: http
               containerPort: 50001
