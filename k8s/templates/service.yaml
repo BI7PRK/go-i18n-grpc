@@ -1,6 +1,6 @@
 
 #定义部署名称
-{{- $deployname := "goi18ngrpc" -}}
+{{- $deployname := "go-i18n-grpc" -}}
 #部署版本号
 {{- $imagetag := index .Values.deploy.version -}} 
 
@@ -73,6 +73,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
   name: {{$deployname}}-ingress
   labels:
     deploy-name: {{$deployname}}
