@@ -1,6 +1,6 @@
 #服务部署
 deploy:
-    go-i18n-grpc: 0.0.0-0
+    version: 0.0.0-0
     namespace: local-dev
     image:
         base: docker-image.bi7prk.com/golang
