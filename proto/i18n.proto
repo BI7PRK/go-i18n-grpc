@@ -1,0 +1,117 @@
+syntax = "proto3";
+package i18n;
+option go_package = "./proto";
+option csharp_namespace = "GoI18n";
+
+service I18nService {
+
+    rpc CultureFeature(CulturesRequest) returns (CulturesReply);
+    rpc CulturesResourceTypeFeature(CultureTypesRequest) returns (CulturesTypesReply);
+    rpc CulturesResourceKeyFeature(CultureKeysRequest) returns (CultureKeysReply);
+    rpc CulturesResourceKeyValueFeature(CultureKeyValuesRequest) returns (CultureKeyValuesReply);
+    rpc AddResourceKeyValue(AddCultureKeyValueRequest) returns (CultureBaseReply);
+   
+}
+
+enum ActionTypes{
+    List = 0;
+    AddOrUpdate = 1;
+    Delete = 2;
+    Get = 3;
+}
+
+message CultureBaseReply {
+    bool success = 1;
+    string message = 2;
+}
+
+message CulturesRequest {
+    ActionTypes action = 1;
+    CultureItem param_data = 2;
+    int32 index = 3;
+    int32 size = 4;
+}
+
+message CulturesReply {
+    repeated CultureItem items = 1;
+    int64 total = 2;
+    bool success = 3;
+    string message = 4;
+}
+message CultureItem {
+    int64 id = 1;
+    string name = 2;
+    string code = 3;
+}
+
+
+message CultureTypesRequest {
+    ActionTypes action = 1;
+    CultureTypeItem param_data = 2;
+    int32 index = 3;
+    int32 size = 4;
+    repeated int32 culture_ids = 5;
+}
+message CulturesTypesReply {
+    repeated CultureTypeItem items = 1;
+    int64 total = 2;
+    bool success = 3;
+    string message = 4;
+}
+message CultureTypeItem {
+    int64 id = 1;
+    string name = 2;
+    string remark = 3;
+}
+
+message CultureKeysRequest {
+    ActionTypes action = 1;
+    CultureKeyItem param_data = 2;
+    int32 index = 3;
+    int32 size = 4;
+}
+
+message CultureKeysReply {
+    repeated CultureKeyItem items = 1;
+    int64 total = 2;
+    bool success = 3;
+    string message = 4;
+}
+
+message CultureKeyItem {
+    int64 id = 1;
+    string name = 2;
+    int32 type_id = 3;
+    string type_name = 4;
+}
+
+message CultureKeyValuesRequest {
+    ActionTypes action = 1;
+    CultureKeyValueItem param_data = 2;
+    int32 index = 3;
+    int32 size = 4;
+}
+message CultureKeyValuesReply {
+    repeated CultureKeyValueItem items = 1;
+    int64 total = 2;
+    bool success = 3;
+    string message = 4;
+}
+
+message CultureKeyValueItem {
+    int64 id = 1;
+    int32 culture_id = 2;
+    int32 key_id = 3;
+    string text = 4;
+}
+
+message AddCultureKeyValueRequest {
+   string key = 1;
+   repeated CultureKeyValue values = 2;
+   int32 type_id = 3;
+}
+
+message CultureKeyValue {
+    int32 culture_id = 2;
+    string text = 4;
+}

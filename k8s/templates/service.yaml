@@ -1,0 +1,92 @@
+
+#定义部署名称
+{{- $deployname := "i18nservice" -}}
+#部署版本号
+{{- $imagetag := index .Values.deploy $deployname -}} 
+
+---
+#服务定义
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{$deployname}}
+  labels:
+    deploy-name: {{$deployname}}
+spec:
+  selector:
+    app: {{$deployname}}
+  ports:
+    - name: grpc
+      port: 80
+      protocol: TCP
+      targetPort: 50001
+
+---
+# 配置定义
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{$deployname}}
+data:
+  APOLLO_APPID: {{.Values.deploy.apollo.appid}}
+  APOLLO_ENV: {{.Values.deploy.apollo.env}}
+  APOLLO_HOST: {{.Values.deploy.apollo.host}}
+  APOLLO_SECRET: {{.Values.deploy.apollo.secret}}
+---
+
+#部署定义
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{$deployname}}-deploy
+  labels:
+    deploy-name: {{$deployname}}
+spec:
+  #replicas: 2
+  selector:
+    matchLabels:
+      app: {{$deployname}}
+  template:
+    metadata:
+      labels:
+        app: {{$deployname}}
+    spec:
+      imagePullSecrets:
+       - name: images-secret-dev
+      containers:
+        - name: {{$deployname}}          
+          image: {{.Values.deploy.image.base}}/{{$deployname}}:{{$imagetag}}
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://*:50001
+            - name: local-dev
+              value: eks
+          ports:
+            - name: http
+              containerPort: 50001
+              protocol: TCP
+
+---
+
+#访问入口定义
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  name: {{$deployname}}-ingress
+  labels:
+    deploy-name: {{$deployname}}
+  # namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{$deployname}}.{{.Values.deploy.ingress.inner_host}}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{$deployname}}
+            port:
+              number: 80

@@ -1,0 +1,18 @@
+#服务部署
+deploy:
+    i18nservice: 0.0.0-0
+    namespace: local-dev
+    image:
+        base: docker-image.bi7prk.com/dotnet
+        secrets: images-secret-dev
+    ingress:
+        #内部通讯域名
+        inner_host: bi7prk.com
+    
+    apollo:
+        appid: "TestApp1"
+        namespace: "application"
+        env: "DEV"
+        cluster: "default"
+        host: "http://apollo.asiatrip.club"
+        secret: "e15b43a47f6248bd9e10fe850c31ee38"

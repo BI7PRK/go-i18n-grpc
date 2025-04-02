@@ -1,0 +1,10 @@
+server:
+  port: 50001
+
+apollo:
+  appid: "TestApp1"
+  namespace: "application"
+  env: "DEV"
+  cluster: "default"
+  host: "http://apollo.asiatrip.club"
+  secret: "e15b43a47f6248bd9e10fe850c31ee38"
