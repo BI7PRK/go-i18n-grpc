@@ -1,6 +1,6 @@
 #服务部署
 deploy:
-    i18nservice: 0.0.0-0
+    go-i18n-grpc: 0.0.0-0
     namespace: local-dev
     image:
         base: docker-image.bi7prk.com/dotnet

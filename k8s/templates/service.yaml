@@ -1,6 +1,6 @@
 
 #定义部署名称
-{{- $deployname := "i18nservice" -}}
+{{- $deployname := "go-i18n-grpc" -}}
 #部署版本号
 {{- $imagetag := index .Values.deploy $deployname -}} 
 
