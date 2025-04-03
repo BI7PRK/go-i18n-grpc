@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"context"
-	"errors"
 	"i18n-service/data/entity"
 	"i18n-service/proto"
 	"i18n-service/service"
@@ -152,7 +151,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		}
 		return &proto.CultureKeysReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
 	}
-	return nil, errors.New("not support action " + req.Action.String())
+	return &proto.CultureKeysReply{Code: proto.ReplyCode_InvalidAction, Message: "not support action " + req.Action.String()}, nil
 }
 
 func (c *CulturesRpc) AddResourceKeyValue(ctx context.Context, req *proto.AddCultureKeyValueRequest) (*proto.CultureBaseReply, error) {
@@ -189,4 +188,27 @@ func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.Cultur
 		culture = append(culture, &proto.CultureResourceItem{Key: keyName, Text: v.Text})
 	}
 	return &proto.CultureResourcesReply{Code: proto.ReplyCode_Success, Message: "ok", Items: culture}, nil
+}
+
+func (c *CulturesRpc) CulturesResourceKeyValueFeature(ctx context.Context, req *proto.CultureKeyValuesRequest) (*proto.CultureKeyValuesReply, error) {
+	switch req.Action {
+	case proto.ActionTypes_List:
+		var findKey string
+		if req.ParamData != nil {
+			findKey = req.SearchKey
+		}
+		cultures, total, err := c.svc.GetCulturesResourceLangPager(int(req.Index), int(req.Size), 0, findKey)
+		if err != nil {
+			return &proto.CultureKeyValuesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
+		}
+		var data []*proto.CultureKeyValueItem
+		for _, culture := range cultures {
+			var item proto.CultureKeyValueItem
+			copier.Copy(&item, culture)
+			data = append(data, &item)
+		}
+		return &proto.CultureKeyValuesReply{Items: data, Total: total}, nil
+	}
+
+	return &proto.CultureKeyValuesReply{Code: proto.ReplyCode_InvalidAction, Message: "not support action " + req.Action.String()}, nil
 }

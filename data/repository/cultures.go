@@ -221,6 +221,17 @@ func (r *CulturesRepository) GetCulturesResourceLangPager(index, size, cultureId
 	sess := engine.NewSession()
 	defer sess.Close()
 	if text != "" {
+		keyDatas := &[]entity.CulturesResourceKeys{}
+		ex := engine.Where("name like ?", "%"+text+"%").Find(keyDatas)
+		if ex == nil {
+			var ids []int32
+			for _, v := range *keyDatas {
+				ids = append(ids, v.ID)
+			}
+			if len(ids) > 0 {
+				sess.In("key_id", ids)
+			}
+		}
 		sess.Where("text like ?", "%"+text+"%")
 	}
 	if cultureId > 0 {

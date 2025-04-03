@@ -31,10 +31,15 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type I18NServiceClient interface {
+	// 国家语言功能
 	CultureFeature(ctx context.Context, in *CulturesRequest, opts ...grpc.CallOption) (*CulturesReply, error)
+	// 语言资源类型功能
 	CulturesResourceTypeFeature(ctx context.Context, in *CultureTypesRequest, opts ...grpc.CallOption) (*CulturesTypesReply, error)
+	// 语言资源key功能
 	CulturesResourceKeyFeature(ctx context.Context, in *CultureKeysRequest, opts ...grpc.CallOption) (*CultureKeysReply, error)
+	// 语言资源key值功能
 	CulturesResourceKeyValueFeature(ctx context.Context, in *CultureKeyValuesRequest, opts ...grpc.CallOption) (*CultureKeyValuesReply, error)
+	// 添加资源key和多个语言翻译
 	AddResourceKeyValue(ctx context.Context, in *AddCultureKeyValueRequest, opts ...grpc.CallOption) (*CultureBaseReply, error)
 	// 根据语言代码获取翻译资源
 	GetCultureResources(ctx context.Context, in *CultureCodeRequest, opts ...grpc.CallOption) (*CultureResourcesReply, error)
@@ -112,10 +117,15 @@ func (c *i18NServiceClient) GetCultureResources(ctx context.Context, in *Culture
 // All implementations must embed UnimplementedI18NServiceServer
 // for forward compatibility.
 type I18NServiceServer interface {
+	// 国家语言功能
 	CultureFeature(context.Context, *CulturesRequest) (*CulturesReply, error)
+	// 语言资源类型功能
 	CulturesResourceTypeFeature(context.Context, *CultureTypesRequest) (*CulturesTypesReply, error)
+	// 语言资源key功能
 	CulturesResourceKeyFeature(context.Context, *CultureKeysRequest) (*CultureKeysReply, error)
+	// 语言资源key值功能
 	CulturesResourceKeyValueFeature(context.Context, *CultureKeyValuesRequest) (*CultureKeyValuesReply, error)
+	// 添加资源key和多个语言翻译
 	AddResourceKeyValue(context.Context, *AddCultureKeyValueRequest) (*CultureBaseReply, error)
 	// 根据语言代码获取翻译资源
 	GetCultureResources(context.Context, *CultureCodeRequest) (*CultureResourcesReply, error)

@@ -3,9 +3,10 @@ package entity
 
 // cultures
 type CulturesResources struct {
-	ID   int32  `xorm:"pk autoincr 'id'" json:"id"`     //主键ID
-	Name string `xorm:"varchar(50) 'name'" json:"name"` //名称
-	Code string `xorm:"varchar(10) 'code'" json:"code"` //代码
+	ID        int32  `xorm:"pk autoincr 'id'" json:"id"`     //主键ID
+	Name      string `xorm:"varchar(50) 'name'" json:"name"` //名称
+	Code      string `xorm:"varchar(10) 'code'" json:"code"` //代码
+	IsDefault bool   `xorm:"'is_default'" json:"is_default"` //是否默认
 }
 
 type CulturesResourceTypes struct {

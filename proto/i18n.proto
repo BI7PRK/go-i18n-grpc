@@ -30,8 +30,8 @@ message CultureResourcesReply {
 }
 
 message CultureResourceItem {
-    string key = 1;
-    string text = 2;
+    string key = 1; // 语言资源key
+    string text = 2; // 语言翻译
 }
 
 message CultureBaseReply {
@@ -54,8 +54,9 @@ message CulturesReply {
 }
 message CultureItem {
     int64 id = 1;
-    string name = 2;
-    string code = 3;
+    string name = 2; // 语言名称
+    string code = 3; // 语言代码
+    bool is_default = 4; // 是否默认语言
 }
 
 
@@ -74,8 +75,8 @@ message CulturesTypesReply {
 }
 message CultureTypeItem {
     int64 id = 1;
-    string name = 2;
-    string remark = 3;
+    string name = 2; // 语言资源类型名称
+    string remark = 3; // 备注
 }
 
 message CultureKeysRequest {
@@ -94,9 +95,9 @@ message CultureKeysReply {
 
 message CultureKeyItem {
     int64 id = 1;
-    string name = 2;
-    int32 type_id = 3;
-    string type_name = 4;
+    string name = 2; // 语言资源key名称
+    int32 type_id = 3; // 语言资源类型ID
+    string type_name = 4; // 语言资源类型名称
 }
 
 message CultureKeyValuesRequest {
@@ -104,6 +105,7 @@ message CultureKeyValuesRequest {
     CultureKeyValueItem param_data = 2;
     int32 index = 3;
     int32 size = 4;
+    string search_key = 5; // 搜索Key名
 }
 message CultureKeyValuesReply {
     repeated CultureKeyValueItem items = 1;
@@ -114,20 +116,20 @@ message CultureKeyValuesReply {
 
 message CultureKeyValueItem {
     int64 id = 1;
-    int32 culture_id = 2;
-    int32 key_id = 3;
-    string text = 4;
+    int32 culture_id = 2; // 语言ID
+    int32 key_id = 3; // 语言资源key ID
+    string text = 4; // 语言翻译
 }
 
 message AddCultureKeyValueRequest {
-   string key = 1;
-   repeated CultureKeyValue values = 2;
-   int32 type_id = 3;
+   string key = 1; // 语言资源key
+   repeated CultureKeyValue values = 2; // 语言翻译
+   int32 type_id = 3; // 语言资源类型ID
 }
 
 message CultureKeyValue {
-    int32 culture_id = 2;
-    string text = 4;
+    int32 culture_id = 2; // 语言ID
+    string text = 4; // 语言翻译
 }
 
 
