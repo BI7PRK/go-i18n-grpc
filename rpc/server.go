@@ -150,6 +150,13 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 			return &proto.CultureKeysReply{Message: err.Error()}, nil
 		}
 		return &proto.CultureKeysReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
+	case proto.ActionTypes_Delete:
+		if req.ParamData == nil || req.ParamData.Id <= 0 {
+			return &proto.CultureKeysReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
+		}
+		if err := c.svc.DeleteCulturesResourceKey(req.ParamData.Id); err != nil {
+			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
+		}
 	}
 	return &proto.CultureKeysReply{Code: proto.ReplyCode_InvalidAction, Message: "not support action " + req.Action.String()}, nil
 }

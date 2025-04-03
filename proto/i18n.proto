@@ -94,7 +94,7 @@ message CultureKeysReply {
 }
 
 message CultureKeyItem {
-    int64 id = 1;
+    int32 id = 1;
     string name = 2; // 语言资源key名称
     int32 type_id = 3; // 语言资源类型ID
     string type_name = 4; // 语言资源类型名称

@@ -248,3 +248,17 @@ func (r *CulturesRepository) GetCulturesResourceLangByKeyId(keyId int) ([]entity
 	err := engine.Where("key_id = ?", keyId).Find(&langs)
 	return langs, err
 }
+
+func (r *CulturesRepository) DeleteCulturesResourceKey(id int32) error {
+	_, err := engine.Transaction(func(s *xorm.Session) (interface{}, error) {
+		_, err := s.ID(id).Delete(&entity.CulturesResourceKeys{
+			ID: id,
+		})
+		if err != nil {
+			return nil, err
+		}
+		_, err = s.Where("key_id = ?", id).Delete(&entity.CulturesResourceLangs{})
+		return nil, err
+	})
+	return err
+}

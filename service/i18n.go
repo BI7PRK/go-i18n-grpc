@@ -58,3 +58,7 @@ func (s *CulturesService) GetCulturesResourceLangPager(index, size, cultureId in
 func (s *CulturesService) GetCulturesResourceLangByKeyId(keyId int) ([]entity.CulturesResourceLangs, error) {
 	return s.culturesRepository.GetCulturesResourceLangByKeyId(keyId)
 }
+
+func (s *CulturesService) DeleteCulturesResourceKey(id int32) error {
+	return s.culturesRepository.DeleteCulturesResourceKey(id)
+}
