@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/spf13/viper"
 )
 
@@ -52,6 +54,12 @@ func LoadAppConfig() (*AppConfig, error) {
 	// 	fmt.Println("配置文件已更改:", e.Name)
 	// })
 
+	// 读取环境变量
+	loadEnv("APOLLO_APPID", "apollo.appid")
+	loadEnv("APOLLO_ENV", "apollo.env")
+	loadEnv("APOLLO_HOST", "apollo.host")
+	loadEnv("APOLLO_SECRET", "apollo.secret")
+
 	var config *AppConfig
 	// 读取配置文件
 	err := viper.ReadInConfig()
@@ -60,4 +68,10 @@ func LoadAppConfig() (*AppConfig, error) {
 	}
 	err = viper.Unmarshal(&config)
 	return config, err
+}
+
+func loadEnv(name, setKey string) {
+	if os.Getenv(name) != "" {
+		viper.SetDefault(setKey, os.Getenv(name))
+	}
 }

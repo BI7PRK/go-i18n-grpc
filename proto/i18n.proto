@@ -21,7 +21,7 @@ enum ActionTypes{
 }
 
 message CultureBaseReply {
-    bool success = 1;
+    ReplyCode code = 1;
     string message = 2;
 }
 
@@ -35,7 +35,7 @@ message CulturesRequest {
 message CulturesReply {
     repeated CultureItem items = 1;
     int64 total = 2;
-    bool success = 3;
+    ReplyCode code  = 3;
     string message = 4;
 }
 message CultureItem {
@@ -55,7 +55,7 @@ message CultureTypesRequest {
 message CulturesTypesReply {
     repeated CultureTypeItem items = 1;
     int64 total = 2;
-    bool success = 3;
+    ReplyCode code  = 3;
     string message = 4;
 }
 message CultureTypeItem {
@@ -74,7 +74,7 @@ message CultureKeysRequest {
 message CultureKeysReply {
     repeated CultureKeyItem items = 1;
     int64 total = 2;
-    bool success = 3;
+    ReplyCode code  = 3;
     string message = 4;
 }
 
@@ -94,7 +94,7 @@ message CultureKeyValuesRequest {
 message CultureKeyValuesReply {
     repeated CultureKeyValueItem items = 1;
     int64 total = 2;
-    bool success = 3;
+    ReplyCode code  = 3;
     string message = 4;
 }
 
@@ -114,4 +114,16 @@ message AddCultureKeyValueRequest {
 message CultureKeyValue {
     int32 culture_id = 2;
     string text = 4;
+}
+
+enum ReplyCode {
+    Success = 0;
+    Error = 1;
+    NotFound = 2;
+    DataBaseError = 3;
+    InvalidParam = 4;
+    InvalidData = 5;
+    InvalidAction = 6;
+    DataExists = 7;
+    DataNotExists = 8;
 }

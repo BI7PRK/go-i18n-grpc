@@ -76,6 +76,7 @@ func createEngine(lst *DataConfigListener) (*xorm.Engine, error) {
 	if err != nil {
 		return nil, fmt.Errorf("database config not found")
 	}
+	log.Println("database config:", u)
 	engine, ex := xorm.NewEngine("mysql", u.User+":"+u.Password+"@tcp("+u.Host+")/"+u.Database+"?charset=utf8mb4&parseTime=True&loc=Local")
 	if ex != nil {
 		return nil, fmt.Errorf("fail to create engine: %w", ex)

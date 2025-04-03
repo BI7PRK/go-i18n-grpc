@@ -32,7 +32,7 @@ func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesReq
 	case proto.ActionTypes_List:
 		cultures, err := c.svc.GetCultures()
 		if err != nil {
-			return &proto.CulturesReply{Message: err.Error()}, nil
+			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		var data []*proto.CultureItem
 		for _, culture := range cultures {
@@ -40,21 +40,21 @@ func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesReq
 			copier.Copy(&item, culture) // 自动映射字段
 			data = append(data, &item)
 		}
-		return &proto.CulturesReply{Items: data}, nil
+		return &proto.CulturesReply{Items: data, Code: proto.ReplyCode_Success}, nil
 	case proto.ActionTypes_AddOrUpdate:
 		if req.ParamData == nil {
-			return &proto.CulturesReply{Message: "param data is null"}, nil
+			return &proto.CulturesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
 		culture := &entity.CulturesResources{}
 		if err := copier.Copy(culture, req.ParamData); err != nil {
-			return nil, err
+			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
 		if err := c.svc.AddOrUpdateCultures(*culture); err != nil {
-			return nil, err
+			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
-		return &proto.CulturesReply{Success: true}, nil
+		return &proto.CulturesReply{Code: proto.ReplyCode_Success}, nil
 	}
-	return &proto.CulturesReply{Message: "not support action " + req.Action.String()}, nil
+	return &proto.CulturesReply{Message: "not support action " + req.Action.String(), Code: proto.ReplyCode_InvalidAction}, nil
 }
 
 func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *proto.CultureTypesRequest) (*proto.CulturesTypesReply, error) {
@@ -73,37 +73,40 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 			cultures, total, err = c.svc.GetCulturesResourceTypePager(int(req.Index), int(req.Size), findKey)
 		}
 		if err != nil {
-			return &proto.CulturesTypesReply{Message: err.Error()}, nil
+			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		var data []*proto.CultureTypeItem
 		for _, culture := range cultures {
 			var item proto.CultureTypeItem
 			copier.Copy(&item, culture) // 自动映射字段
 		}
-		return &proto.CulturesTypesReply{Items: data, Total: total}, nil
+		return &proto.CulturesTypesReply{Items: data, Total: total, Code: proto.ReplyCode_Success}, nil
 
 	case proto.ActionTypes_AddOrUpdate:
 		if req.ParamData == nil {
-			return &proto.CulturesTypesReply{Message: "param data is null"}, nil
+			return &proto.CulturesTypesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
 		culture := &entity.CulturesResourceTypes{}
 		if err := copier.Copy(culture, req.ParamData); err != nil {
-			return &proto.CulturesTypesReply{Message: err.Error()}, nil
+			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
 		if err := c.svc.AddOrUpdateCulturesResourceType(*culture); err != nil {
-			return &proto.CulturesTypesReply{Message: err.Error()}, nil
+			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		return &proto.CulturesTypesReply{}, nil
 	case proto.ActionTypes_Delete:
 		if req.ParamData == nil || req.ParamData.Id <= 0 {
-			return &proto.CulturesTypesReply{Message: "param data is null"}, nil
+			return &proto.CulturesTypesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
 		if err := c.svc.DeleteCulturesResourceType(req.ParamData.Id); err != nil {
-			return &proto.CulturesTypesReply{Message: err.Error()}, nil
+			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
-		return &proto.CulturesTypesReply{Success: true}, nil
+		return &proto.CulturesTypesReply{Code: proto.ReplyCode_Success}, nil
 	}
-	return &proto.CulturesTypesReply{Message: "not support action " + req.Action.String()}, nil
+	return &proto.CulturesTypesReply{
+		Message: "not support action " + req.Action.String(),
+		Code:    proto.ReplyCode_InvalidAction,
+	}, nil
 }
 
 func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto.CultureKeysRequest) (*proto.CultureKeysReply, error) {
@@ -115,7 +118,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		}
 		cultures, total, err := c.svc.GetCulturesResourceKeyPager(int(req.Index), int(req.Size), findKey)
 		if err != nil {
-			return &proto.CultureKeysReply{Message: err.Error()}, nil
+			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		var tids []int32
 		for _, v := range cultures {
@@ -138,16 +141,16 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		return &proto.CultureKeysReply{Items: data, Total: total}, nil
 	case proto.ActionTypes_AddOrUpdate:
 		if req.ParamData == nil {
-			return &proto.CultureKeysReply{Message: "param data is null"}, nil
+			return &proto.CultureKeysReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
 		culture := &entity.CulturesResourceKeys{}
 		if err := copier.Copy(culture, req.ParamData); err != nil {
-			return &proto.CultureKeysReply{Message: err.Error()}, nil
+			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
 		if _, err := c.svc.AddOrUpdateCulturesResourceKey(*culture); err != nil {
 			return &proto.CultureKeysReply{Message: err.Error()}, nil
 		}
-		return &proto.CultureKeysReply{Success: true, Message: "ok"}, nil
+		return &proto.CultureKeysReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
 	}
 	return nil, errors.New("not support action " + req.Action.String())
 }
@@ -158,7 +161,7 @@ func (c *CulturesRpc) AddResourceKeyValue(ctx context.Context, req *proto.AddCul
 		cultureLang = append(cultureLang, entity.CulturesResourceLangs{CultureID: v.CultureId, Text: v.Text})
 	}
 	if err := c.svc.AddCulturesResourceLangs(req.Key, req.TypeId, cultureLang); err != nil {
-		return &proto.CultureBaseReply{Message: err.Error()}, nil
+		return &proto.CultureBaseReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
-	return &proto.CultureBaseReply{Success: true, Message: "ok"}, nil
+	return &proto.CultureBaseReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
 }

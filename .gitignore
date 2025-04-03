@@ -18,6 +18,8 @@
 # bin/
 # pkg/
 
+config/*.json/
+
 # IDEs and editors
 .idea/
 *.iml

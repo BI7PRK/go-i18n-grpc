@@ -30,7 +30,7 @@ func NewCulturesRepository() *CulturesRepository {
 	}()
 
 	// 自动建表
-	// if err := db.Sync2(new(entity.CulturesResources),
+	// if err := engine.Sync2(new(entity.CulturesResources),
 	// 	new(entity.CulturesResourceTypes),
 	// 	new(entity.CulturesResourceKeys),
 	// 	new(entity.CulturesResourceLangs)); err != nil {
