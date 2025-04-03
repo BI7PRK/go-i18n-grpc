@@ -10,14 +10,24 @@ service I18nService {
     rpc CulturesResourceKeyFeature(CultureKeysRequest) returns (CultureKeysReply);
     rpc CulturesResourceKeyValueFeature(CultureKeyValuesRequest) returns (CultureKeyValuesReply);
     rpc AddResourceKeyValue(AddCultureKeyValueRequest) returns (CultureBaseReply);
+    // 根据语言代码获取翻译资源
+    rpc GetCultureResources(CultureCodeRequest) returns (CultureResourcesReply);
    
 }
 
-enum ActionTypes{
-    List = 0;
-    AddOrUpdate = 1;
-    Delete = 2;
-    Get = 3;
+message CultureCodeRequest {
+    string code = 1;
+}
+
+message CultureResourcesReply {
+    repeated CultureResourceItem items = 1;
+    ReplyCode code  = 2;
+    string message = 3;
+}
+
+message CultureResourceItem {
+    string key = 1;
+    string text = 2;
 }
 
 message CultureBaseReply {
@@ -114,6 +124,14 @@ message AddCultureKeyValueRequest {
 message CultureKeyValue {
     int32 culture_id = 2;
     string text = 4;
+}
+
+
+enum ActionTypes{
+    List = 0;
+    AddOrUpdate = 1;
+    Delete = 2;
+    Get = 3;
 }
 
 enum ReplyCode {

@@ -49,6 +49,9 @@ func (s *CulturesService) GetCulturesResourceTypeByIds(ids []int32) ([]entity.Cu
 func (s *CulturesService) GetCulturesResourceKeyPager(index, size int, text string) ([]entity.CulturesResourceKeys, int64, error) {
 	return s.culturesRepository.GetCulturesResourceKeyPager(index, size, text)
 }
+func (s *CulturesService) GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error) {
+	return s.culturesRepository.GetCulturesResourceKeyByIds(ids)
+}
 func (s *CulturesService) GetCulturesResourceLangPager(index, size, cultureId int, text string) ([]entity.CulturesResourceLangs, int64, error) {
 	return s.culturesRepository.GetCulturesResourceLangPager(index, size, cultureId, text)
 }

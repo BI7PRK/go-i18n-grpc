@@ -24,6 +24,7 @@ const (
 	I18NService_CulturesResourceKeyFeature_FullMethodName      = "/i18n.I18nService/CulturesResourceKeyFeature"
 	I18NService_CulturesResourceKeyValueFeature_FullMethodName = "/i18n.I18nService/CulturesResourceKeyValueFeature"
 	I18NService_AddResourceKeyValue_FullMethodName             = "/i18n.I18nService/AddResourceKeyValue"
+	I18NService_GetCultureResources_FullMethodName             = "/i18n.I18nService/GetCultureResources"
 )
 
 // I18NServiceClient is the client API for I18NService service.
@@ -35,6 +36,8 @@ type I18NServiceClient interface {
 	CulturesResourceKeyFeature(ctx context.Context, in *CultureKeysRequest, opts ...grpc.CallOption) (*CultureKeysReply, error)
 	CulturesResourceKeyValueFeature(ctx context.Context, in *CultureKeyValuesRequest, opts ...grpc.CallOption) (*CultureKeyValuesReply, error)
 	AddResourceKeyValue(ctx context.Context, in *AddCultureKeyValueRequest, opts ...grpc.CallOption) (*CultureBaseReply, error)
+	// 根据语言代码获取翻译资源
+	GetCultureResources(ctx context.Context, in *CultureCodeRequest, opts ...grpc.CallOption) (*CultureResourcesReply, error)
 }
 
 type i18NServiceClient struct {
@@ -95,6 +98,16 @@ func (c *i18NServiceClient) AddResourceKeyValue(ctx context.Context, in *AddCult
 	return out, nil
 }
 
+func (c *i18NServiceClient) GetCultureResources(ctx context.Context, in *CultureCodeRequest, opts ...grpc.CallOption) (*CultureResourcesReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CultureResourcesReply)
+	err := c.cc.Invoke(ctx, I18NService_GetCultureResources_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // I18NServiceServer is the server API for I18NService service.
 // All implementations must embed UnimplementedI18NServiceServer
 // for forward compatibility.
@@ -104,6 +117,8 @@ type I18NServiceServer interface {
 	CulturesResourceKeyFeature(context.Context, *CultureKeysRequest) (*CultureKeysReply, error)
 	CulturesResourceKeyValueFeature(context.Context, *CultureKeyValuesRequest) (*CultureKeyValuesReply, error)
 	AddResourceKeyValue(context.Context, *AddCultureKeyValueRequest) (*CultureBaseReply, error)
+	// 根据语言代码获取翻译资源
+	GetCultureResources(context.Context, *CultureCodeRequest) (*CultureResourcesReply, error)
 	mustEmbedUnimplementedI18NServiceServer()
 }
 
@@ -128,6 +143,9 @@ func (UnimplementedI18NServiceServer) CulturesResourceKeyValueFeature(context.Co
 }
 func (UnimplementedI18NServiceServer) AddResourceKeyValue(context.Context, *AddCultureKeyValueRequest) (*CultureBaseReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddResourceKeyValue not implemented")
+}
+func (UnimplementedI18NServiceServer) GetCultureResources(context.Context, *CultureCodeRequest) (*CultureResourcesReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCultureResources not implemented")
 }
 func (UnimplementedI18NServiceServer) mustEmbedUnimplementedI18NServiceServer() {}
 func (UnimplementedI18NServiceServer) testEmbeddedByValue()                     {}
@@ -240,6 +258,24 @@ func _I18NService_AddResourceKeyValue_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _I18NService_GetCultureResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CultureCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(I18NServiceServer).GetCultureResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: I18NService_GetCultureResources_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(I18NServiceServer).GetCultureResources(ctx, req.(*CultureCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // I18NService_ServiceDesc is the grpc.ServiceDesc for I18NService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +302,10 @@ var I18NService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddResourceKeyValue",
 			Handler:    _I18NService_AddResourceKeyValue_Handler,
+		},
+		{
+			MethodName: "GetCultureResources",
+			Handler:    _I18NService_GetCultureResources_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -165,3 +165,28 @@ func (c *CulturesRpc) AddResourceKeyValue(ctx context.Context, req *proto.AddCul
 	}
 	return &proto.CultureBaseReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
 }
+
+func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.CultureCodeRequest) (*proto.CultureResourcesReply, error) {
+	if req.Code == "" {
+		return &proto.CultureResourcesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
+	}
+	resource, err := c.svc.GetResourcesByCode(req.Code)
+	if err != nil {
+		return &proto.CultureResourcesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
+	}
+	var keyIds = make([]int32, 0)
+	for _, v := range resource {
+		keyIds = append(keyIds, v.KeyID)
+	}
+	keyData, ex := c.svc.GetCulturesResourceKeyByIds(keyIds)
+	if ex != nil {
+		return &proto.CultureResourcesReply{Message: ex.Error(), Code: proto.ReplyCode_DataBaseError}, nil
+	}
+
+	var culture []*proto.CultureResourceItem
+	for _, v := range resource {
+		keyName := keyData[v.KeyID]
+		culture = append(culture, &proto.CultureResourceItem{Key: keyName, Text: v.Text})
+	}
+	return &proto.CultureResourcesReply{Code: proto.ReplyCode_Success, Message: "ok", Items: culture}, nil
+}

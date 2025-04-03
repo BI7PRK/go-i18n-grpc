@@ -21,7 +21,6 @@ func NewCulturesRepository() *CulturesRepository {
 	engine, _ = provider.GetEngine()
 	// 监听数据库配置变化
 	go func() {
-		log.Println("database config listener started")
 		for c := range provider.ConfigListener.NewValue {
 			log.Printf("New database settings: %+v\n", c)
 			provider.ClearEngine()
@@ -201,6 +200,19 @@ func (r *CulturesRepository) GetCulturesResourceKeyPager(index, size int, text s
 	offset := index*size - size
 	total, err := sess.Limit(size, offset).FindAndCount(&keys)
 	return keys, total, err
+}
+
+func (r *CulturesRepository) GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error) {
+	var types []entity.CulturesResourceKeys
+	err := engine.In("id", ids).Find(&types)
+	if err != nil {
+		return nil, err
+	}
+	data := make(map[int32]string)
+	for _, v := range types {
+		data[v.ID] = v.Name
+	}
+	return data, nil
 }
 
 // 获取资源分页
