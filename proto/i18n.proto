@@ -4,11 +4,15 @@ option go_package = "./proto";
 option csharp_namespace = "GoI18n";
 
 service I18nService {
-
+    // 国家语言功能
     rpc CultureFeature(CulturesRequest) returns (CulturesReply);
+    // 语言资源类型功能
     rpc CulturesResourceTypeFeature(CultureTypesRequest) returns (CulturesTypesReply);
+    // 语言资源key功能
     rpc CulturesResourceKeyFeature(CultureKeysRequest) returns (CultureKeysReply);
+    // 语言资源key值功能
     rpc CulturesResourceKeyValueFeature(CultureKeyValuesRequest) returns (CultureKeyValuesReply);
+    // 添加资源key和多个语言翻译
     rpc AddResourceKeyValue(AddCultureKeyValueRequest) returns (CultureBaseReply);
     // 根据语言代码获取翻译资源
     rpc GetCultureResources(CultureCodeRequest) returns (CultureResourcesReply);
