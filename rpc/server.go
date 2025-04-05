@@ -3,8 +3,8 @@ package rpc
 import (
 	"context"
 	"i18n-service/data/entity"
+	"i18n-service/data/repository"
 	"i18n-service/proto"
-	"i18n-service/service"
 	"log"
 
 	"github.com/jinzhu/copier"
@@ -12,12 +12,12 @@ import (
 
 type CulturesRpc struct {
 	proto.UnimplementedI18NServiceServer
-	svc *service.CulturesService
+	repo *repository.CulturesRepository
 }
 
 func NewCulturesRpc() *CulturesRpc {
 	return &CulturesRpc{
-		svc: service.NewCulturesService(),
+		repo: repository.NewCulturesRepository(),
 	}
 }
 
@@ -29,7 +29,7 @@ func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesReq
 
 	switch req.Action {
 	case proto.ActionTypes_List:
-		cultures, err := c.svc.GetCultures()
+		cultures, err := c.repo.GetCultures()
 		if err != nil {
 			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
@@ -48,7 +48,7 @@ func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesReq
 		if err := copier.Copy(culture, req.ParamData); err != nil {
 			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
-		if err := c.svc.AddOrUpdateCultures(*culture); err != nil {
+		if err := c.repo.AddOrUpdateCultures(*culture); err != nil {
 			return &proto.CulturesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		return &proto.CulturesReply{Code: proto.ReplyCode_Success}, nil
@@ -63,13 +63,13 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 		var total int64
 		var err error
 		if len(req.CultureIds) > 0 {
-			cultures, err = c.svc.GetCulturesResourceTypeByIds(req.CultureIds)
+			cultures, err = c.repo.GetCulturesResourceTypeByIds(req.CultureIds)
 		} else {
 			var findKey string
 			if req.ParamData != nil {
 				findKey = req.ParamData.Name
 			}
-			cultures, total, err = c.svc.GetCulturesResourceTypePager(int(req.Index), int(req.Size), findKey)
+			cultures, total, err = c.repo.GetCulturesResourceTypePager(int(req.Index), int(req.Size), findKey)
 		}
 		if err != nil {
 			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
@@ -89,7 +89,7 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 		if err := copier.Copy(culture, req.ParamData); err != nil {
 			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
-		if err := c.svc.AddOrUpdateCulturesResourceType(*culture); err != nil {
+		if err := c.repo.AddOrUpdateCulturesResourceType(*culture); err != nil {
 			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		return &proto.CulturesTypesReply{}, nil
@@ -97,7 +97,7 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 		if req.ParamData == nil || req.ParamData.Id <= 0 {
 			return &proto.CulturesTypesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
-		if err := c.svc.DeleteCulturesResourceType(req.ParamData.Id); err != nil {
+		if err := c.repo.DeleteCulturesResourceType(req.ParamData.Id); err != nil {
 			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 		return &proto.CulturesTypesReply{Code: proto.ReplyCode_Success}, nil
@@ -115,7 +115,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		if req.ParamData != nil {
 			findKey = req.ParamData.Name
 		}
-		cultures, total, err := c.svc.GetCulturesResourceKeyPager(int(req.Index), int(req.Size), findKey)
+		cultures, total, err := c.repo.GetCulturesResourceKeyPager(int(req.Index), int(req.Size), findKey)
 		if err != nil {
 			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
@@ -123,7 +123,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		for _, v := range cultures {
 			tids = append(tids, int32(v.TypeID))
 		}
-		cultureTypes, _ := c.svc.GetCulturesResourceTypeByIds(tids)
+		cultureTypes, _ := c.repo.GetCulturesResourceTypeByIds(tids)
 		types := make(map[int32]string)
 		for _, item := range cultureTypes {
 			types[item.ID] = item.Name
@@ -146,7 +146,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		if err := copier.Copy(culture, req.ParamData); err != nil {
 			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_Error}, nil
 		}
-		if _, err := c.svc.AddOrUpdateCulturesResourceKey(*culture); err != nil {
+		if _, err := c.repo.AddOrUpdateCulturesResourceKey(*culture); err != nil {
 			return &proto.CultureKeysReply{Message: err.Error()}, nil
 		}
 		return &proto.CultureKeysReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
@@ -154,7 +154,7 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		if req.ParamData == nil || req.ParamData.Id <= 0 {
 			return &proto.CultureKeysReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 		}
-		if err := c.svc.DeleteCulturesResourceKey(req.ParamData.Id); err != nil {
+		if err := c.repo.DeleteCulturesResourceKey(req.ParamData.Id); err != nil {
 			return &proto.CultureKeysReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
 	}
@@ -166,7 +166,7 @@ func (c *CulturesRpc) AddResourceKeyValue(ctx context.Context, req *proto.AddCul
 	for _, v := range req.Values {
 		cultureLang = append(cultureLang, entity.CulturesResourceLangs{CultureID: v.CultureId, Text: v.Text})
 	}
-	if err := c.svc.AddCulturesResourceLangs(req.Key, req.TypeId, cultureLang); err != nil {
+	if err := c.repo.AddCulturesResourceLangs(req.Key, req.TypeId, cultureLang); err != nil {
 		return &proto.CultureBaseReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
 	return &proto.CultureBaseReply{Code: proto.ReplyCode_Success, Message: "ok"}, nil
@@ -176,7 +176,7 @@ func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.Cultur
 	if req.Code == "" {
 		return &proto.CultureResourcesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
 	}
-	resource, err := c.svc.GetResourcesByCode(req.Code)
+	resource, err := c.repo.GetResourcesByCode(req.Code)
 	if err != nil {
 		return &proto.CultureResourcesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
@@ -184,7 +184,7 @@ func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.Cultur
 	for _, v := range resource {
 		keyIds = append(keyIds, v.KeyID)
 	}
-	keyData, ex := c.svc.GetCulturesResourceKeyByIds(keyIds)
+	keyData, ex := c.repo.GetCulturesResourceKeyByIds(keyIds)
 	if ex != nil {
 		return &proto.CultureResourcesReply{Message: ex.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
@@ -204,7 +204,7 @@ func (c *CulturesRpc) CulturesResourceKeyValueFeature(ctx context.Context, req *
 		if req.ParamData != nil {
 			findKey = req.SearchKey
 		}
-		cultures, total, err := c.svc.GetCulturesResourceLangPager(int(req.Index), int(req.Size), 0, findKey)
+		cultures, total, err := c.repo.GetCulturesResourceLangPager(int(req.Index), int(req.Size), 0, findKey)
 		if err != nil {
 			return &proto.CultureKeyValuesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
