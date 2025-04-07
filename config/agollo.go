@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"sync"
 
@@ -48,15 +49,14 @@ func NewAgolloClient(listener AgolloChangeListener) (*AgolloClientImpl, error) {
 		client, err = agollo.StartWithConfig(func() (*agocfg.AppConfig, error) {
 			// 配置Apollo客户端
 			return &agocfg.AppConfig{
-				AppID:            agoConfig.Appid,
-				Cluster:          agoConfig.Env,
-				NamespaceName:    agoConfig.Namespace,
-				IP:               agoConfig.Host,
-				Secret:           agoConfig.Secret,
-				MustStart:        true,
-				BackupConfigPath: "./config/apollo.json",
-				// 监听配置变化
-				IsBackupConfig: true,
+				AppID:            agoConfig.Appid,     // 应用ID
+				Cluster:          agoConfig.Env,       // 集群环境
+				NamespaceName:    agoConfig.Namespace, // 命名空间
+				IP:               agoConfig.Host,      // 主机
+				Secret:           agoConfig.Secret,    // 密钥
+				MustStart:        true,                // 是否必须启动
+				BackupConfigPath: os.TempDir(),        // 备份配置路径
+				IsBackupConfig:   true,                // 是否备份配置
 			}, nil
 		})
 		log.Println("Apollo Client Started")
