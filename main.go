@@ -11,7 +11,6 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc"
-	"xorm.io/xorm"
 )
 
 func main() {
@@ -19,13 +18,6 @@ func main() {
 	if ex != nil {
 		panic(ex)
 	}
-
-	// 初始化 MySQL 和 xorm
-	db, err := xorm.NewEngine("mysql", "root:123456@/culturei18n?charset=utf8")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
 
 	// 定义命令行参数
 	portPtr := flag.Int("p", 50001, "gRPC service port")

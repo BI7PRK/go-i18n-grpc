@@ -40,7 +40,7 @@ func (c *MetadataContext) GetStringSlice(key string) ([]string, error) {
 	return values, nil
 }
 
-func (c *MetadataContext) GetMetadate() map[string][]string {
+func (c *MetadataContext) GetMetadata() map[string][]string {
 	data := make(map[string][]string)
 	md, ok := metadata.FromIncomingContext(c.Context)
 	if !ok {

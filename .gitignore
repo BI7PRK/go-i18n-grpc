@@ -18,7 +18,10 @@
 # bin/
 # pkg/
 
-config/*.json/
+/config/*.json/
+*/config/*.json/
+tests/*.yaml
+tests/*.log
 
 # IDEs and editors
 .idea/

@@ -12,7 +12,7 @@ import (
 
 type CulturesRpc struct {
 	proto.UnimplementedI18NServiceServer
-	repo *repository.CulturesRepository
+	repo repository.CulturesRepository
 }
 
 func NewCulturesRpc() *CulturesRpc {
@@ -21,9 +21,15 @@ func NewCulturesRpc() *CulturesRpc {
 	}
 }
 
+// func NewCulturesRpc() *CulturesRpc {
+// 	return &CulturesRpc{
+// 		repo: repository.CulturesRepository{},
+// 	}
+// }
+
 func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesRequest) (*proto.CulturesReply, error) {
 	md := NewMetadataContext(ctx)
-	for k, v := range md.GetMetadate() {
+	for k, v := range md.GetMetadata() {
 		log.Println("metadata:", k, v)
 	}
 
@@ -77,7 +83,11 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 		var data []*proto.CultureTypeItem
 		for _, culture := range cultures {
 			var item proto.CultureTypeItem
-			copier.Copy(&item, culture) // 自动映射字段
+			if err := copier.Copy(&item, culture); err != nil {
+				log.Printf("Failed to copy CultureTypeItem: %v", err)
+				continue
+			}
+			data = append(data, &item)
 		}
 		return &proto.CulturesTypesReply{Items: data, Total: total, Code: proto.ReplyCode_Success}, nil
 
@@ -92,7 +102,7 @@ func (c *CulturesRpc) CulturesResourceTypeFeature(ctx context.Context, req *prot
 		if err := c.repo.AddOrUpdateCulturesResourceType(*culture); err != nil {
 			return &proto.CulturesTypesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 		}
-		return &proto.CulturesTypesReply{}, nil
+		return &proto.CulturesTypesReply{Code: proto.ReplyCode_Success}, nil
 	case proto.ActionTypes_Delete:
 		if req.ParamData == nil || req.ParamData.Id <= 0 {
 			return &proto.CulturesTypesReply{Message: "param data is null", Code: proto.ReplyCode_InvalidParam}, nil
@@ -123,10 +133,12 @@ func (c *CulturesRpc) CulturesResourceKeyFeature(ctx context.Context, req *proto
 		for _, v := range cultures {
 			tids = append(tids, int32(v.TypeID))
 		}
-		cultureTypes, _ := c.repo.GetCulturesResourceTypeByIds(tids)
 		types := make(map[int32]string)
-		for _, item := range cultureTypes {
-			types[item.ID] = item.Name
+		if len(tids) > 0 {
+			cultureTypes, _ := c.repo.GetCulturesResourceTypeByIds(tids)
+			for _, item := range cultureTypes {
+				types[item.ID] = item.Name
+			}
 		}
 		var data []*proto.CultureKeyItem
 		for _, culture := range cultures {
