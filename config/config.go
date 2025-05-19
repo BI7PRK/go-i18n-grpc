@@ -11,15 +11,16 @@ type (
 		Server struct {
 			Port int `json:"http_port" default:"50001"`
 		} `json:"server"`
+		Apollo AgolloConfig `json:"apollo"`
+	}
 
-		Apollo struct {
-			Appid     string `json:"appid"`
-			Namespace string `json:"namespace"`
-			Env       string `json:"env"`
-			Cluster   string `json:"cluster"`
-			Host      string `json:"host"`
-			Secret    string `json:"secret"`
-		} `json:"apollo"`
+	AgolloConfig struct {
+		AppId     string `yaml:"appId"`
+		Cluster   string `yaml:"cluster"`
+		Namespace string `yaml:"namespace"`
+		Meta      string `yaml:"meta"`
+		Secret    string `yaml:"secret"`
+		IsBackup  bool   `yaml:"isBackup"`
 	}
 
 	MySQLConfig struct {

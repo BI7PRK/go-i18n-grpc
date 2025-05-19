@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"i18n-service/config"
 	"i18n-service/data/entity"
 	"i18n-service/data/repository"
 	"i18n-service/proto"
@@ -15,23 +16,18 @@ type CulturesRpc struct {
 	repo repository.CulturesRepository
 }
 
-func NewCulturesRpc() *CulturesRpc {
+func NewCulturesRpc(cfgManager *config.ConfigManager) *CulturesRpc {
+	var _repo, _ = repository.NewCulturesRepository(cfgManager)
 	return &CulturesRpc{
-		repo: repository.NewCulturesRepository(),
+		repo: _repo,
 	}
 }
 
-// func NewCulturesRpc() *CulturesRpc {
-// 	return &CulturesRpc{
-// 		repo: repository.CulturesRepository{},
-// 	}
-// }
-
 func (c *CulturesRpc) CultureFeature(ctx context.Context, req *proto.CulturesRequest) (*proto.CulturesReply, error) {
-	md := NewMetadataContext(ctx)
-	for k, v := range md.GetMetadata() {
-		log.Println("metadata:", k, v)
-	}
+	// md := NewMetadataContext(ctx)
+	// for k, v := range md.GetMetadata() {
+	// 	log.Println("metadata:", k, v)
+	// }
 
 	switch req.Action {
 	case proto.ActionTypes_List:

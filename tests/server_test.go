@@ -2,15 +2,38 @@ package tests
 
 import (
 	"context"
+	"fmt"
+	"i18n-service/config"
 	"i18n-service/proto"
 	"i18n-service/rpc"
+	"log"
 	"testing"
 )
 
+var (
+	configManager *config.ConfigManager
+)
+
+func init() {
+	var err error
+	// 加载配置文件
+	cfg, e := config.LoadConfig("../")
+	if e != nil {
+		log.Fatalf("Failed to load config: %v", e)
+	}
+	// Create a new ConfigManager
+	configManager, err = config.NewConfigManager(&cfg.Apollo)
+	if err != nil {
+		fmt.Println("Error creating ConfigManager:", err)
+		return
+	}
+	configManager.Start()
+	log.Println("ConfigManager started.")
+
+}
+
 func TestCulturesRpc_CultureList(t *testing.T) {
-
-	rpcServer := rpc.NewCulturesRpc()
-
+	rpcServer := rpc.NewCulturesRpc(configManager)
 	// 测试列表功能
 	request := &proto.CulturesRequest{
 		Action: proto.ActionTypes_List,
@@ -32,7 +55,7 @@ func TestCulturesRpc_CultureList(t *testing.T) {
 
 func TestCulturesRpc_CulturesResourceTypeList(t *testing.T) {
 
-	rpcServer := rpc.NewCulturesRpc()
+	rpcServer := rpc.NewCulturesRpc(configManager)
 
 	// 测试列表功能
 	request := &proto.CultureTypesRequest{
@@ -56,7 +79,7 @@ func TestCulturesRpc_CulturesResourceTypeList(t *testing.T) {
 
 func TestCulturesRpc_CulturesResourceKeyList(t *testing.T) {
 
-	rpcServer := rpc.NewCulturesRpc()
+	rpcServer := rpc.NewCulturesRpc(configManager)
 
 	// 测试列表功能
 	request := &proto.CultureKeysRequest{
