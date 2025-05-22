@@ -32,6 +32,7 @@ type CulturesRepository interface {
 	GetCulturesResourceTypeByIds(ids []int32) ([]entity.CulturesResourceTypes, error)
 	GetCulturesResourceKeyPager(i int, param2 int, text string) ([]entity.CulturesResourceKeys, int64, error)
 	GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error)
+	GetCulturesResourceKeys() (map[int32]string, error)
 	AddCulturesResourceLangs(key string, tid int32, cultureLang []entity.CulturesResourceLangs) error
 	DeleteCulturesResourceKey(id int32) error
 	GetCulturesResourceTypePager(i int, param2 int, text string) ([]entity.CulturesResourceTypes, int64, error)
@@ -262,6 +263,19 @@ func (r *CulturesRepositoryImpl) GetCulturesResourceKeyPager(index, size int, te
 func (r *CulturesRepositoryImpl) GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error) {
 	var types []entity.CulturesResourceKeys
 	err := r.db.In("id", ids).Find(&types)
+	if err != nil {
+		return nil, err
+	}
+	data := make(map[int32]string)
+	for _, v := range types {
+		data[v.ID] = v.Name
+	}
+	return data, nil
+}
+
+func (r *CulturesRepositoryImpl) GetCulturesResourceKeys() (map[int32]string, error) {
+	var types []entity.CulturesResourceKeys
+	err := r.db.Find(&types)
 	if err != nil {
 		return nil, err
 	}

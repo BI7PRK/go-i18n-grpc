@@ -188,11 +188,7 @@ func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.Cultur
 	if err != nil {
 		return &proto.CultureResourcesReply{Message: err.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
-	var keyIds = make([]int32, 0)
-	for _, v := range resource {
-		keyIds = append(keyIds, v.KeyID)
-	}
-	keyData, ex := c.repo.GetCulturesResourceKeyByIds(keyIds)
+	keyData, ex := c.repo.GetCulturesResourceKeys()
 	if ex != nil {
 		return &proto.CultureResourcesReply{Message: ex.Error(), Code: proto.ReplyCode_DataBaseError}, nil
 	}
