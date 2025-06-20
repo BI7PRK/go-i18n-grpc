@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.27.3
-// source: proto/i18n.proto
+// source: i18n.proto
 
 package proto
 
@@ -319,5 +319,5 @@ var I18NService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/i18n.proto",
+	Metadata: "i18n.proto",
 }

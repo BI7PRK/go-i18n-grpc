@@ -21,21 +21,153 @@ type CulturesRepositoryImpl struct {
 }
 
 type CulturesRepository interface {
+	// 获取支持的语言列表
+	// 参数：
+	//
+	// 	index: 页码
+	// 	size: 页大小
+	// 	text: 查询条件
+	// 返回值：
+	//
+	// 	[]entity.CulturesResources: 支持的语言列表
+	// 	error: 错误信息
 	GetCultures() ([]entity.CulturesResources, error)
+	// 根据 Code 获取语言
+	// 参数：
+	//
+	// 	code: 语言代码
+	// 返回值：
+	// 	[]entity.CulturesResourceLangs: 语言列表
+	// 	error: 错误信息
 	GetResourcesByCode(code string) ([]entity.CulturesResourceLangs, error)
+	// 添加或更新语言
+	// 参数：
+	//
+	// 	culture: 语言
+	// 返回值：
+	//
+	// 	error: 错误信息
 	AddOrUpdateCultures(culture entity.CulturesResources) error
+	// 添加或更新资源类型
+	// 参数：
+	//
+	// 	data: 资源类型
+	// 返回值：
+	//
+	// 	error: 错误信息
 	AddOrUpdateCulturesResourceType(data entity.CulturesResourceTypes) error
+	// 删除资源类型
+	// 参数：
+	//
+	// 	id: 资源类型ID
+	// 	返回值：
+	//
+	// 	error: 错误信息
 	DeleteCulturesResourceType(id int64) error
+	// 添加或更新资源键
+	// 参数：
+	//
+	// 	data: 资源键
+	// 返回值：
+	//
+	// 	*entity.CulturesResourceKeys: 资源键
+	// 	error: 错误信息
 	AddOrUpdateCulturesResourceKey(data entity.CulturesResourceKeys) (*entity.CulturesResourceKeys, error)
+	// 添加或更新资源语言
+	// 参数：
+	//
+	// 	data: 资源语言
+	// 	返回值：
+	//
+	// 	error: 错误信息
 	AddOrUpdateCulturesResourceLang(data entity.CulturesResourceLangs) error
-	GetCulturesResourceLangPager(i int, param2 int, cultureId int, findKey string) ([]entity.CulturesResourceLangs, int64, error)
+	// 获取资源语言分页列表
+	// 参数：
+	//
+	// 	index: 页码
+	// 	size: 页记录数
+	// 	cultureId: 语言ID
+	// 	findKey: 查询条件
+	// 	返回值：
+	//
+	// 	[]entity.CulturesResourceLangs: 资源语言列表
+	// 	total: 总记录数
+	// 	error: 错误信息
+	GetCulturesResourceLangPager(index int, size int, cultureId int, findKey string) ([]entity.CulturesResourceLangs, int64, error)
+	// 根据ID获取资源类型列表
+	// 参数：
+	//
+	// 	ids: 资源类型ID列表
+	// 	返回值：
+	//
+	// 	[]entity.CulturesResourceTypes: 资源类型列表
+	// 	error: 错误信息
 	GetCulturesResourceTypeByIds(ids []int32) ([]entity.CulturesResourceTypes, error)
-	GetCulturesResourceKeyPager(i int, param2 int, text string) ([]entity.CulturesResourceKeys, int64, error)
+	// 获取资源键分页列表
+	// 参数：
+	//
+	// 	index: 页码
+	// 	limit: 页记录数
+	// 	text: 查询条件
+	// 	返回值：
+	//
+	// 	[]entity.CulturesResourceKeys: 资源键列表
+	// 	total: 总记录数
+	// 	error: 错误信息
+	GetCulturesResourceKeyPager(index int, limit int, text string) ([]entity.CulturesResourceKeys, int64, error)
+	// 根据ID获取资源键列表
+	// 参数：
+	//
+	// 	ids: 资源键ID列表
+	// 返回值：
+	//
+	// 	map[int32]string: 资源键列表
+	// 	error: 错误信息
 	GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error)
+	// 获取资源键列表
+	// 返回值：
+	//
+	// 	map[int32]string: 资源键列表
+	// 	error: 错误信息
 	GetCulturesResourceKeys() (map[int32]string, error)
+	// 添加或更新资源语言
+	// 参数：
+	//
+	// 	key: 资源键
+	// 	tid: 资源类型ID
+	// 	cultureLang: 资源语言列表
+	// 返回值：
+	//
+	// 	error: 错误信息
 	AddCulturesResourceLangs(key string, tid int32, cultureLang []entity.CulturesResourceLangs) error
+	// 删除资源键
+	// 参数：
+	//
+	// 	id: 资源键ID
+	// 返回值：
+	//
+	// 	error: 错误信息
 	DeleteCulturesResourceKey(id int32) error
-	GetCulturesResourceTypePager(i int, param2 int, text string) ([]entity.CulturesResourceTypes, int64, error)
+	// 获取资源类型分页列表
+	// 参数：
+	//
+	// 	index: 页码
+	// 	size: 页大小
+	// 	text: 查询条件
+	// 返回值：
+	//
+	// 	[]entity.CulturesResourceTypes: 资源类型列表
+	// 	total: 总记录数
+	// 	error: 错误信息
+	GetCulturesResourceTypePager(index int, limit int, text string) ([]entity.CulturesResourceTypes, int64, error)
+	// 获取资源语言列表
+	// 参数：
+	//
+	// 	keyId: 资源键ID
+	// 返回值：
+	//
+	// 	[]entity.CulturesResourceLangs: 资源语言列表
+	// 	error: 错误信息
 	GetCulturesResourceLangByKeyId(keyId int) ([]entity.CulturesResourceLangs, error)
 }
 
@@ -201,6 +333,7 @@ func (r *CulturesRepositoryImpl) AddOrUpdateCulturesResourceLang(data entity.Cul
 	return err
 }
 
+// 添加资源
 func (r *CulturesRepositoryImpl) AddCulturesResourceLangs(key string, tid int32, cultureLang []entity.CulturesResourceLangs) error {
 	keyData := &entity.CulturesResourceKeys{Name: key}
 	has, ex := r.db.Get(keyData)
@@ -260,6 +393,7 @@ func (r *CulturesRepositoryImpl) GetCulturesResourceKeyPager(index, size int, te
 	return keys, total, err
 }
 
+// 根据ID获取资源键
 func (r *CulturesRepositoryImpl) GetCulturesResourceKeyByIds(ids []int32) (map[int32]string, error) {
 	var types []entity.CulturesResourceKeys
 	err := r.db.In("id", ids).Find(&types)
@@ -273,6 +407,7 @@ func (r *CulturesRepositoryImpl) GetCulturesResourceKeyByIds(ids []int32) (map[i
 	return data, nil
 }
 
+// 获取资源键列表
 func (r *CulturesRepositoryImpl) GetCulturesResourceKeys() (map[int32]string, error) {
 	var types []entity.CulturesResourceKeys
 	err := r.db.Find(&types)
@@ -320,6 +455,7 @@ func (r *CulturesRepositoryImpl) GetCulturesResourceLangByKeyId(keyId int) ([]en
 	return langs, err
 }
 
+// 删除资源键
 func (r *CulturesRepositoryImpl) DeleteCulturesResourceKey(id int32) error {
 	_, err := r.db.Transaction(func(s *xorm.Session) (interface{}, error) {
 		_, err := s.ID(id).Delete(&entity.CulturesResourceKeys{
