@@ -201,6 +201,8 @@ func (c *CulturesRpc) GetCultureResources(ctx context.Context, req *proto.Cultur
 	for id, v := range keyData {
 		if langs[id] != "" {
 			text = langs[id]
+		} else {
+			text = v
 		}
 		culture = append(culture, &proto.CultureResourceItem{Key: v, Text: text})
 	}
